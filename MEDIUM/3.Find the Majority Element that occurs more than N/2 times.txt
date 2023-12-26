@@ -1,0 +1,147 @@
+Problem Statement:
+ Given an array of N integers, write a program to return an element that occurs more than N/2 times in the given array. You may consider that such an element always exists in the array.
+
+Examples
+Example 1:
+Input Format: N = 3, nums[] = {3,2,3}
+Result: 3
+Explanation: When we just count the occurrences of each number and compare with half of the size of the array, you will get 3 for the above solution. 
+
+Example 2:
+Input Format:  N = 7, nums[] = {2,2,1,1,1,2,2}
+
+Result: 2
+
+Explanation: After counting the number of times each element appears and comparing it with half of array size, we get 2 as result.
+
+Example 3:
+Input Format:  N = 10, nums[] = {4,4,2,4,3,4,4,3,2,4}
+
+Result: 4
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Brute Force Approach : 
+
+Algorithm / Intuition
+Naive Approach: 
+Approach:
+
+The steps are as follows:
+
+1.We will run a loop that will select the elements of the array one by one.
+2.Now, for each element, we will run another loop and count its occurrence in the given array.
+3.If any element occurs more than the floor of (N/2), we will simply return it.
+
+CODE : 
+
+
+
+
+
+function majorityElement(arr) {
+    // Size of the given array
+    let n = arr.length;
+
+    for (let i = 0; i < n; i++) {
+        // Selected element is arr[i]
+        let cnt = 0;
+        for (let j = 0; j < n; j++) {
+            // Counting the frequency of arr[i]
+            if (arr[j] === arr[i]) {
+                cnt++;
+            }
+        }
+
+        // Check if frequency is greater than n/2
+        if (cnt > Math.floor(n / 2)) {
+            return arr[i];
+        }
+    }
+
+    return -1;
+}
+
+let arr = [2, 2, 1, 1, 1, 2, 2];
+let ans = majorityElement(arr);
+console.log("The majority element is:", ans);
+
+
+Complexity Analysis
+Time Complexity: O(N2), where N = size of the given array. Reason: For every element of the array the inner loop runs for N times. And there are N elements in the array. So, the total time complexity is O(N2). Space Complexity: O(1) as we use no extra space.
+
+///////////////////////////////////////////////////////////////////////////////
+
+Better Approach : 
+
+Algorithm / Intuition
+Solution 2 (Better):
+Intuition:
+Use a better data structure to reduce the number of look-up operations and hence the time complexity. Moreover, we have been calculating the count of the same element again and again – so we have to reduce that also.
+
+CODE:
+
+
+
+
+function majorityElement(arr) {
+    // Size of the given array
+    const n = arr.length;
+
+    // Creating a Map
+    const map = new Map();
+
+    // Storing the elements with their occurrences
+    for (let i = 0; i < n; i++) {
+        const num = arr[i];
+        if (map.has(num)) {
+            map.set(num, map.get(num) + 1);
+        } else {
+            map.set(num, 1);
+        }
+    }
+
+    // Searching for the majority element
+    for (const [num, count] of map) {
+        if (count > Math.floor(n / 2)) {
+            return num;
+        }
+    }
+
+    return -1;
+}
+
+const arr = [2, 2, 1, 1, 1, 2, 2];
+const ans = majorityElement(arr);
+console.log("The majority element is:", ans);
+
+Time Complexity: O(n)
+
+The code iterates through the given array once to populate the map with the occurrences of each element, and this takes O(n) time.
+The second loop iterates through the map, which has at most 'n' elements (where 'n' is the size of the array). So, the second loop also takes O(n) time.
+Overall, the time complexity is dominated by the two loops, making it O(n).
+Space Complexity: O(n)
+
+The space complexity is determined by the space used to store the elements and their occurrences in the map.
+In the worst case, each distinct element appears once in the map, so the map could have 'n' entries, leading to O(n) space complexity.
+Additionally, the variables used for iteration and storage are constant, so they don't significantly contribute to the space complexity.
+In summary, both the time and space complexity of the provided code are O(n), where 'n' is the size of the input array.
+////////////////////////////////////////////////////////////////////////////////
+
+Optimal Approach : 
+
+Algorithm / Intuition
+Optimal Approach: Moore’s Voting Algorithm:
+Intuition:
+If the array contains a majority element, its occurrence must be greater than the floor(N/2). Now, we can say that the count of minority elements and majority elements is equal up to a certain point in the array. So when we traverse through the array we try to keep track of the count of elements and the element itself for which we are tracking the count. 
+
+After traversing the whole array, we will check the element stored in the variable. If the question states that the array must contain a majority element, the stored element will be that one but if the question does not state so, then we need to check if the stored element is the majority element or not. If not, then the array does not contain any majority element.
+
+Complexity Analysis : 
+
+Time Complexity: O(N) + O(N), where N = size of the given array.
+Reason: The first O(N) is to calculate the count and find the expected majority element. The second one is to check if the expected element is the majority one or not.
+
+Note: If the question states that the array must contain a majority element, in that case, we do not need the second check. Then the time complexity will boil down to O(N).
+
+Space Complexity: O(1) as we are not using any extra space.

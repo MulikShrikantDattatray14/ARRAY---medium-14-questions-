@@ -1,0 +1,195 @@
+Problem Statement: 
+Given a matrix if an element in the matrix is 0 then you will have to set its entire column and row to 0 and then return the matrix.
+
+Examples: 
+
+Examples 1:
+
+Input: matrix=[[1,1,1],[1,0,1],[1,1,1]]
+
+Output: [[1,0,1],[0,0,0],[1,0,1]]
+
+Explanation: Since matrix[2][2]=0.Therfore the 2nd column and 2nd row wil be set to 0.
+ 
+Input: matrix=[[0,1,2,0],[3,4,5,2],[1,3,1,5]]
+
+Output:[[0,0,0,0],[0,4,5,0],[0,3,1,0]]
+
+Explanation:Since matrix[0][0]=0 and matrix[0][3]=0. Therefore 1st row, 1st column and 4th column will be set to 0
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Brute Force Approach : 
+
+Algorithm / Intuition
+Approach:
+The steps are the following:
+
+First, we will use two loops(nested loops) to traverse all the cells of the matrix.
+If any cell (i,j) contains the value 0, we will mark all cells in row i and column j with -1 except those which contain 0.
+We will perform step 2 for every cell containing 0.
+Finally, we will mark all the cells containing -1 with 0.
+Thus the given matrix will be modified according to the question.
+
+CODE : 
+
+function markRow(matrix, n, m, i) {
+  // set all non-zero elements as -1 in the row i:
+  for (let j = 0; j < m; j++) {
+    if (matrix[i][j] !== 0) {
+      matrix[i][j] = -1;
+    }
+  }
+}
+
+function markCol(matrix, n, m, j) {
+  // set all non-zero elements as -1 in the col j:
+  for (let i = 0; i < n; i++) {
+    if (matrix[i][j] !== 0) {
+      matrix[i][j] = -1;
+    }
+  }
+}
+
+function zeroMatrix(matrix, n, m) {
+  // Set -1 for rows and cols that contains 0. Don't mark any 0 as -1:
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < m; j++) {
+      if (matrix[i][j] === 0) {
+        markRow(matrix, n, m, i);
+        markCol(matrix, n, m, j);
+      }
+    }
+  }
+  // Finally, mark all -1 as 0:
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < m; j++) {
+      if (matrix[i][j] === -1) {
+        matrix[i][j] = 0;
+      }
+    }
+  }
+  return matrix;
+}
+
+const matrix = [
+  [1, 1, 1],
+  [1, 0, 1],
+  [1, 1, 1],
+];
+
+const n = matrix.length;
+const m = matrix[0].length;
+
+const ans = zeroMatrix(matrix, n, m);
+
+console.log("The Final matrix is: ");
+for (let i = 0; i < n; i++) {
+  console.log(ans[i].join(" "));
+}
+
+
+Let's analyze the time and space complexity of the provided code.
+
+Time Complexity:
+Zeroing Matrix (First Two Nested Loops):
+
+Two nested loops iterate through each element in the matrix, resulting in O(n * m) operations.
+Inside these loops, the markRow and markCol functions are called if a zero is encountered, each taking O(n) or O(m) time, respectively.
+Therefore, the overall time complexity for this part is O(n * m * (n + m)).
+Final Marking of -1 to 0 (Last Two Nested Loops):
+
+Two additional nested loops iterate through each element in the matrix, resulting in O(n * m) operations.
+Inside these loops, a constant amount of operations is performed, so the overall time complexity for this part is O(n * m).
+The dominant factor is the first part, so the overall time complexity is O(n * m * (n + m)).
+
+Space Complexity:
+The space complexity is mainly determined by the input matrix itself, as the algorithm modifies it in place.
+
+The additional space used by the algorithm is constant, as no data structures are created that grow with the input size.
+Therefore, the space complexity is O(1).
+In summary, the time complexity is O(n * m * (n + m)), and the space complexity is O(1).
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Better Approach :
+
+Intuition:
+
+In the previous approach, we were marking the cells with -1 while traversing the matrix. But in this approach, we are not marking the entire row and column instead, we are marking the ith index of row array i.e. row[i], and jth index of col array i.e. col[j] with 1. These marked indices of the two arrays, row and col will tell us for which rows and columns we need to change the values to 0. For any cell (i, j), if the row[i] or col[j] is marked with 1, we will change the value of cell(i, j) to 0.
+
+Here we are marking the cells after traversal whereas in the previous case, we were marking the cells while traversal. That is how the time complexity reduces in this case.
+
+CODE :
+// this is the better approach ( if possible try to use best optimal solution at end )
+function zeroMatrix(matrix) {
+  const n = matrix.length;
+  const m = matrix[0].length;
+  const row = new Array(n).fill(0); // row array
+  const col = new Array(m).fill(0); // col array
+
+  // Traverse the matrix:
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < m; j++) {
+      if (matrix[i][j] === 0) {
+        // mark ith index of row with 1:
+        row[i] = 1;
+
+        // mark jth index of col with 1:
+        col[j] = 1;
+      }
+    }
+  }
+
+  // Finally, mark all (i, j) as 0
+  // if row[i] or col[j] is marked with 1.
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < m; j++) {
+      if (row[i] || col[j]) {
+        matrix[i][j] = 0;
+      }
+    }
+  }
+
+  return matrix;
+}
+
+const matrix = [
+  [1, 1, 1],
+  [1, 0, 1],
+  [1, 1, 1],
+];
+const ans = zeroMatrix(matrix);
+
+console.log("The Final matrix is:");
+for (const row of ans) {
+  console.log(row.join(" "));
+}
+
+
+
+complexity Analysis : 
+
+Let's analyze the time and space complexity of the provided code:
+
+Time Complexity:
+The code uses two nested loops to traverse the entire matrix, making it O(n * m), where n is the number of rows and m is the number of columns in the matrix. The two loops for marking the rows and columns and updating the matrix also contribute to the time complexity. Therefore, the overall time complexity is O(n * m).
+
+Space Complexity:
+The code uses two additional arrays (row and col) to keep track of rows and columns that need to be zeroed. The size of these arrays is proportional to the number of rows (n) and columns (m) in the matrix. Therefore, the space complexity is O(n + m).
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+Optimal Solution: 
+The space complexity of the Better solution Above  can be improved. Instead of using two separate arrays (row and col), we can use two boolean variables to determine whether the first row and the first column need to be zeroed. This will reduce the space complexity to O(1). Here's an optimized version:
+
+Let's analyze the space and time complexity:
+
+Time Complexity:
+The code has three nested loops. The first two loops iterate over the first row and column to check if there are any zeros.
+The next two loops iterate over the entire matrix to mark zero positions using the first row and column.
+The last two loops iterate over the matrix again to zero out rows and columns based on the marked positions.
+The time complexity is O(m * n), where m is the number of rows and n is the number of columns in the matrix.
+
+Space Complexity:
+The space complexity is O(1) since the code uses a constant amount of extra space regardless of the size of the input matrix. The additional space is used for two boolean variables (firstRowZero and firstColZero).
+In summary, the time complexity is O(m * n), and the space complexity is O(1).
